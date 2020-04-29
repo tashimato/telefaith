@@ -1,8 +1,8 @@
 <div align="center" style="margin-top:20px">
     <img width="200" src="https://github.com/tashimato/tf-images/blob/master/TF4.png?raw=true"><br/>
-    <h1 style="margin-top:40px">
-<h2 style="margin: 0 0;font-family:sans-serif;font-weight:300;font-size: 45px;background: -webkit-linear-gradient(40deg, #e91e63,#e91e63,#2196f3, #29b6f6);-webkit-background-clip: text;-webkit-text-fill-color: transparent;" align="center">TeleFaith</h1>
-    TeleFaith is a Node.js module for interacting with the <a href="https://core.telegram.org/bots/api">Telegram Bot API</a>.
+
+<h1 style="margin: 0 0;font-family:sans-serif;font-weight:300;font-size: 45px;background: -webkit-linear-gradient(40deg, #e91e63,#e91e63,#2196f3, #29b6f6);-webkit-background-clip: text;-webkit-text-fill-color: transparent;" align="center">TeleFaith</h1>
+    TeleFaith is a Node.js module for interacting with the <a href="https://core.telegram.org/bots/api">Telegram Bot API</a>.<br>
 
 <!-- [![Bot API](https://img.shields.io/badge/Bot%20API-v.4.4.0-00aced.svg?style=flat-square&logo=telegram)](https://core.telegram.org/bots/api) -->
 [![npm package](https://img.shields.io/npm/v/telefaith?logo=npm&style=flat-square)](https://www.npmjs.org/package/telefaith)
@@ -352,7 +352,7 @@ start().catch(err => console.log(err));
 ```
 
 ### what the hell is `ctx`?
-Telgram bot doesn't limited to messages only, bots can answer inline queries, resive poll answers and ...<br>
+Telegram bot doesn't limited to messages only, bots can answer inline queries, resive poll answers and ...<br>
 So, all of these things(messages, polls, inline queries,...) came throw `ctx`. you can check the `ctx` type with `ctx.content`.
 
 ```javascript
@@ -1143,6 +1143,16 @@ async function messageHandler(msg) {
             caption: 'Learn sqlite here: https://www.sqlitetutorial.net/sqlite-sample-database/'
         });
 
+        //add thumb for files
+        await bot.sendDocument(msg.chat.id, fs.createReadStream('./public/learn javascript async await.pdf'), {
+            caption: `There’s a special syntax to work with promises in a more comfortable fashion, called “async/await”. It’s surprisingly easy to understand and use.`,
+            thumb: fs.createReadStream('./public/learn-async-await-logojpg.jpg')
+        });
+
+        await bot.sendDocument(msg.chat.id, fs.createReadStream('./public/Firefox Installer.exe'), {
+            thumb: fs.createReadStream('./public/firefox-logo.jpg')
+        });
+
 
     }
     catch (err) {
@@ -1154,7 +1164,7 @@ async function messageHandler(msg) {
 
 <b>RESULT:</b>
 
-<img src="https://github.com/tashimato/tf-images/blob/master/sendDocumentMethod.png?raw=true" width="400">
+<img src="https://github.com/tashimato/tf-images/blob/master/sendDocumentMethod.png?raw=true" width="600">
 
 
 

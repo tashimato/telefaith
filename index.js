@@ -298,9 +298,11 @@ class Bot {
             reply_markup: options.replyMarkup
         };
 
-        if (typeof animation !== 'string') {
+        if (typeof animation !== 'string' || body.thumb) {
 
             const sentInfo = await sendFileKinds(this.token, 'sendAnimation', body);
+
+            console.log(body)
 
             if (sentInfo.ok)
                 return new Message(sentInfo.result, this);
@@ -367,7 +369,7 @@ class Bot {
             reply_markup: options.replyMarkup
         };
 
-        if (typeof video !== 'string') {
+        if (typeof video !== 'string' || body.thumb) {
 
             const sentInfo = await sendFileKinds(this.token, 'sendVideo', body);
 
@@ -430,7 +432,7 @@ class Bot {
             reply_markup: options.replyMarkup
         };
 
-        if (typeof video !== 'string') {
+        if (typeof video !== 'string' || body.thumb) {
 
             const sentInfo = await sendFileKinds(this.token, 'sendVideoNote', body);
 
@@ -493,7 +495,7 @@ class Bot {
             reply_markup: options.replyMarkup
         };
 
-        if (typeof document !== 'string') {
+        if (typeof document !== 'string' || body.thumb) {
 
             const sentInfo = await sendFileKinds(this.token, 'sendDocument', body);
 
@@ -562,7 +564,7 @@ class Bot {
             reply_markup: options.replyMarkup
         };
 
-        if (typeof audio !== 'string') {
+        if (typeof audio !== 'string' || body.thumb) {
 
             const sentInfo = await sendFileKinds(this.token, 'sendAudio', body);
 
@@ -747,12 +749,12 @@ class Bot {
 
         const equipped = media.map(file => {
 
-            if(file.parseMode) {
+            if (file.parseMode) {
                 file.parse_mode = file.parseMode;
                 delete file.parseMode;
             }
 
-            if(file.supportsStreaming) {
+            if (file.supportsStreaming) {
                 file.supports_streaming = file.supportsStreaming;
                 delete file.supportsStreaming;
             }
