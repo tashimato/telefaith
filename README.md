@@ -73,7 +73,7 @@ const bot = new teleBot(BOT_TOKEN);
 
 async function start() {
 
-    const botInfo = await bot.testBot();
+    const botInfo = await bot.getMe();
     console.table(botInfo);
 
     for await (const ctx of bot) {
@@ -323,7 +323,7 @@ async function start() {
 start().catch(err => console.log(err));
 
 ```
-To make sure `BOT_TOKEN` is correct and we can connect to our bot we can use `testBot` method at the Beginning of the start function.<br>
+To make sure `BOT_TOKEN` is correct and we can connect to our bot we can use `getMe` method at the Beginning of the start function.<br>
 If token wasn't correct its gonna throw error and `catch()` method runs.
 ```javascript
 const teleBot = require('telefaith');
@@ -334,7 +334,7 @@ const bot = new teleBot(BOT_TOKEN);
 async function start() {
 
     //check bot Correctness 👇👇👇👇👇
-    const botInfo = await bot.testBot();
+    const botInfo = await bot.getMe();
     console.table(botInfo);
 
     for await(const ctx of bot) {
@@ -554,7 +554,7 @@ Well, we just need an async handler:
 ```javascript
 async function start() {
 
-    const botInfo = await bot.testBot();
+    const botInfo = await bot.getMe();
     console.table(botInfo);
 
     for await (const ctx of bot) {
@@ -638,7 +638,7 @@ const bot = new teleBot(BOT_TOKEN);
 
 async function start() {
 
-    const botInfo = await bot.testBot();
+    const botInfo = await bot.getMe();
     console.table(botInfo);
 
     for await (const ctx of bot) {
@@ -1731,7 +1731,7 @@ Another Example:
 ```javascript
 async function start() {
 
-    const botInfo = await bot.testBot();
+    const botInfo = await bot.getMe();
     console.table(botInfo);
 
     for await (const ctx of bot) {
