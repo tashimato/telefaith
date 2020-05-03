@@ -54,6 +54,7 @@ npm i telefaith
     * [editMessageReplyMarkup](#editMessageReplyMarkup)
     * [deleteMessage](#deleteMessage)
  - [Chat Methods](#Chat-Methods)
+ - [Creating StickerSet](#Creating-StickerSet)
  - Missing Methods
     * [Payments](https://core.telegram.org/bots/api#payments)
     * [Telegram passport](https://core.telegram.org/bots/api#telegram-passport)
@@ -2033,6 +2034,86 @@ async function messageHandler(msg) {
 
             await msg.chat.deleteStickerSet().catch(err => console.log(err));
             //await bot.deleteChatStickerSet(msg.chat.id).catch(err => console.log(err));
+
+        }
+
+    }
+    catch (err) {
+        console.log(err);
+    }
+
+}
+```
+
+
+
+<a name="#Creating-StickerSet"></a>
+## Creating StickerSet
+Learn more about creating sticker set: <a href="https://core.telegram.org/bots/api#createnewstickerset">Learn About StickerSet</a>
+- images for stickers must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px.
+- image for thumbnail must be up to 128 kilobytes in size and have width and height exactly 100px, or a TGS animation with the thumbnail up to 32 kilobytes in size
+- Here's some images that i used to create sticker set https://github.com/tashimato/tf-images/tree/master/images
+
+```javascript
+const fs = require('fs');
+
+async function messageHandler(msg) {
+
+    try {
+
+        if (msg.text === 'create') {
+
+            const { username: botUsername } = await bot.getMe();
+
+
+            //create a set
+            await bot.createNewStickerSet({
+                userId: msg.from.id,
+                title: 'Mercyful Fate Albums',
+                name: `Mercyful_Fate_Albums_covers_by_${botUsername}`,
+                emojis: '😈🤘',
+                pngSticker: fs.createReadStream('./images/The Bell Witch.jpg')
+            });
+
+
+
+
+            //add more stickers to set
+            await bot.addStickerToSet({
+                userId: msg.from.id,
+                name: `Mercyful_Fate_Albums_covers_by_${botUsername}`,
+                emojis: '😈🤘',
+                pngSticker: fs.createReadStream('./images/The Beginning.png')
+            });
+
+            await bot.addStickerToSet({
+                userId: msg.from.id,
+                name: `Mercyful_Fate_Albums_covers_by_${botUsername}`,
+                emojis: '😈🤘',
+                pngSticker: fs.createReadStream('./images/Melissa.JPG')
+            });
+
+
+            //set thumbnail for set
+            await bot.setStickerSetThumb({
+                userId: msg.from.id,
+                name: `Mercyful_Fate_Albums_covers_by_${botUsername}`,
+                thumb: fs.createReadStream('./images/thumbs/mercyful-fate-king-diamond.jpg')
+            });
+
+
+            const set = await bot.getStickerSet(`Mercyful_Fate_Albums_covers_by_${botUsername}`);
+
+            for (const sticker of set.stickers) {
+                await bot.sendSticker(msg.chat.id, sticker.fileId);
+            }
+
+
+            //change the position of the last sticker to first sticker
+            //await bot.setStickerPositionInSet(set.stickers.pop().fileId, 0);
+
+            //delete the last sticker
+            //await bot.deleteStickerFromSet(set.stickers.pop().fileId);
 
         }
 

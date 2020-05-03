@@ -1,5 +1,5 @@
 const { sendMessageKinds, sendFileKinds, getUpdates } = require('./utils/api-interaction');
-const { User, Message, Chat, StickerSet, Context, TeleResponseError, InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ChatMember, UserProfilePhotos } = require('./utils/types');
+const { User, Message, Chat, StickerSet, Context, TeleResponseError, InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ChatMember, UserProfilePhotos, FileType, MaskPosition } = require('./utils/types');
 const fetch = require('node-fetch');
 const chalk = require('chalk');
 
@@ -73,11 +73,11 @@ class Bot {
      * A simple method for testing your bot's auth token. Requires no parameters. Returns basic information about the bot in form of a User object.
      * @returns {Promise<User>}
      * @example
-     * bot.testBot()
+     * bot.getMe()
             .then(botInfo => console.table(botInfo))
             .catch(err => console.log('something is wrong', err));
      */
-    async testBot() {
+    async getMe() {
 
         const connectionInfo = await sendMessageKinds(this.token, 'getMe');
         if (connectionInfo.ok)
@@ -1983,6 +1983,194 @@ class Bot {
             return new StickerSet(set.result, this);
         else
             throw new TeleResponseError(set.description, set.error_code);
+
+    }
+
+
+
+
+    /**
+     * Use this method to upload a .PNG file with a sticker for later use in createNewStickerSet and addStickerToSet methods (can be used multiple times). Returns the uploaded File on success.
+     * @param {number} userId User identifier of sticker file owner
+     * @param {ReadableStream} pngSticker PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px.
+     * @returns {Promise<FileType>}
+     */
+    async uploadStickerFile(userId, pngSticker) {
+
+        const body = {
+            user_id: userId,
+            png_sticker: pngSticker
+        };
+
+        const sentInfo = await sendFileKinds(this.token, 'uploadStickerFile', body);
+
+        if (sentInfo.ok)
+            return new FileType(sentInfo.result);
+        else
+            throw new TeleResponseError(sentInfo.description, sentInfo.error_code);
+
+    }
+
+
+
+
+    /**
+     * @typedef {Object} createNewStickerSetParams
+     * @property {number} userId User identifier of sticker set owner
+     * @property {string} name Short name of sticker set, to be used in t.me/addstickers/ URLs (e.g., animals). Can contain only english letters, digits and underscores. Must begin with a letter, can't contain consecutive underscores and must end in “_by_<bot username>”. <bot_username> is case insensitive. 1-64 characters.
+     * @property {string} title Sticker set title, 1-64 characters
+     * @property {string|ReadableStream} [pngSticker] PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. Pass a fileId as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one
+     * @property {string} emojis One or more emoji corresponding to the sticker
+     * @property {ReadableStream} [tgsSticker] TGS animation with the sticker
+     * @property {boolean} [containsMasks] Pass True, if a set of mask stickers should be created
+     * @property {MaskPosition} [maskPosition] object for position where the mask should be placed on faces
+     */
+
+    /**
+     * 
+     * Use this method to create a new sticker set owned by a user. The bot will be able to edit the sticker set thus created. You must use exactly one of the fields pngSticker or tgsSticker. Returns True on success.
+     * @param {createNewStickerSetParams} setParams
+     * @returns {Promise<boolean>}
+     */
+    async createNewStickerSet(setParams) {
+
+        const body = {
+            user_id: setParams.userId,
+            name: setParams.name,
+            title: setParams.title,
+            png_sticker: setParams.pngSticker,
+            emojis: setParams.emojis,
+            tgs_sticker: setParams.tgsSticker,
+            contains_masks: setParams.containsMasks,
+            mask_position: setParams.maskPosition
+        };
+
+        const sentInfo = await sendFileKinds(this.token, 'createNewStickerSet', body);
+
+        if (sentInfo.ok)
+            return sentInfo.result;
+        else
+            throw new TeleResponseError(sentInfo.description, sentInfo.error_code);
+
+    }
+
+
+
+
+    /**
+     * @typedef {Object} addStickerToSetParams
+     * @property {number} userId User identifier of sticker set owner
+     * @property {string} name Sticker set name
+     * @property {string|ReadableStream} [pngSticker] PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. Pass a fileId as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one
+     * @property {string} emojis One or more emoji corresponding to the sticker
+     * @property {ReadableStream} [tgsSticker] TGS animation with the sticker
+     * @property {MaskPosition} [maskPosition] object for position where the mask should be placed on faces
+     */
+
+    /**
+     * 
+     * Use this method to add a new sticker to a set created by the bot. You must use exactly one of the fields png_sticker or tgs_sticker. Animated stickers can be added to animated sticker sets and only to them. Animated sticker sets can have up to 50 stickers. Static sticker sets can have up to 120 stickers. Returns True on success.
+     * @param {addStickerToSetParams} setParams
+     * @returns {Promise<boolean>}
+     */
+    async addStickerToSet(setParams) {
+
+        const body = {
+            user_id: setParams.userId,
+            name: setParams.name,
+            png_sticker: setParams.pngSticker,
+            emojis: setParams.emojis,
+            tgs_sticker: setParams.tgsSticker,
+            mask_position: setParams.maskPosition
+        };
+
+        const sentInfo = await sendFileKinds(this.token, 'addStickerToSet', body);
+
+        if (sentInfo.ok)
+            return sentInfo.result;
+        else
+            throw new TeleResponseError(sentInfo.description, sentInfo.error_code);
+
+    }
+
+
+
+
+    /**
+     * Use this method to move a sticker in a set created by the bot to a specific position. Returns True on success.
+     * @param {string} sticker File identifier of the sticker
+     * @param {number} position New sticker position in the set, zero-based
+     * @returns {Promise<boolean>}
+     */
+    async setStickerPositionInSet(sticker, position) {
+
+        const body = {
+            sticker,
+            position
+        };
+
+        const sentInfo = await sendMessageKinds(this.token, 'setStickerPositionInSet', body);
+
+        if (sentInfo.ok)
+            return sentInfo.result;
+        else
+            throw new TeleResponseError(sentInfo.description, sentInfo.error_code);
+
+    }
+
+
+
+
+    /**
+     * 
+     * Use this method to delete a sticker from a set created by the bot. Returns True on success.
+     * @param {string} sticker File identifier of the sticker
+     * @returns {Promise<boolean>}
+     */
+    async deleteStickerFromSet(sticker) {
+
+        const body = {
+            sticker
+        };
+
+        const sentInfo = await sendMessageKinds(this.token, 'deleteStickerFromSet', body);
+
+        if (sentInfo.ok)
+            return sentInfo.result;
+        else
+            throw new TeleResponseError(sentInfo.description, sentInfo.error_code);
+
+    }
+
+
+
+
+    /**
+     * @typedef {Object} setStickerSetThumbParams
+     * @property {string} name Sticker set name
+     * @property {number} userId User identifier of the sticker set owner
+     * @property {string|ReadableStream} thumb A PNG image with the thumbnail, must be up to 128 kilobytes in size and have width and height exactly 100px, or a TGS animation with the thumbnail up to 32 kilobytes in size; see https://core.telegram.org/animated_stickers#technical-requirements for animated sticker technical requirements.
+     */
+    /**
+     * 
+     * Use this method to set the thumbnail of a sticker set. Animated thumbnails can be set for animated sticker sets only. Returns True on success.
+     * @param {setStickerSetThumbParams} params
+     * @returns {Promise<boolean>}
+     */
+    async setStickerSetThumb(params) {
+
+        const body = {
+            name: params.name,
+            user_id: params.userId,
+            thumb: params.thumb
+        };
+
+        const sentInfo = await sendFileKinds(this.token, 'setStickerSetThumb', body);
+
+        if (sentInfo.ok)
+            return sentInfo.result;
+        else
+            throw new TeleResponseError(sentInfo.description, sentInfo.error_code);
 
     }
 

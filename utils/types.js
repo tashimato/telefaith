@@ -2560,6 +2560,20 @@ class ChosenInlineResult {
 
 
 
+class FileType {
+
+    constructor(file) {
+        this.fileId = file.file_id;
+        this.fileUniqueId = file.file_unique_id;
+        this.fileSize = file.file_size;
+        this.filePath = file.file_path;
+    }
+
+}
+
+
+
+
 class UserProfilePhotos {
 
     constructor(profilePhotos, bot) {
@@ -2605,5 +2619,7 @@ module.exports = {
     Chat,
     ChatPermissions,
     ChatMember,
-    UserProfilePhotos
+    UserProfilePhotos,
+    FileType,
+    MaskPosition
 };
