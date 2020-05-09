@@ -10,6 +10,14 @@ class Context {
          */
         this.editedMessage = update.edited_message ? new Message(update.edited_message, bot) : undefined;
         /**
+         * @type {Message}
+         */
+        this.channelPost = update.channel_post ? new Message(update.channel_post) : undefined;
+        /**
+         * @type {Message}
+         */
+        this.editedChannelPost = update.edited_channel_post ? new Message(update.edited_channel_post) : undefined;
+        /**
          * @type {InlineQuery}
          */
         this.inlineQuery = update.inline_query ? new InlineQuery(update.inline_query, bot) : undefined;
@@ -29,7 +37,7 @@ class Context {
 
 
     /**
-     * @returns {'message' | 'editedMessage' | 'inlineQuery' | 'poll' | 'callbackQuery'|'chosenInlineResult'}
+     * @returns {'message' | 'editedMessage' | 'channelPost' | 'editedChannelPost' | 'inlineQuery' | 'poll' | 'callbackQuery'|'chosenInlineResult'}
      */
     get content() {
         if (this.message)
@@ -37,6 +45,12 @@ class Context {
 
         if (this.editedMessage)
             return 'editedMessage';
+
+        if (this.channelPost)
+            return 'channelPost';
+
+        if (this.editedChannelPost)
+            return 'editedChannelPost';
 
         if (this.inlineQuery)
             return 'inlineQuery';
@@ -49,6 +63,7 @@ class Context {
 
         if (this.chosenInlineResult)
             return 'chosenInlineResult';
+
     }
 
 
